@@ -1,28 +1,68 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Vue-Cita</h1>
+    <SimpleForm @submit="submit" />
+    
+    <div class="preview-container">
+      <div v-if="loading">loading...</div>
+      <ul class="list-view" v-if="!loading && treeData">
+        <tree-item
+          :item="treeData"
+        ></tree-item>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TreeItem from './components/TreeItem.vue'
+import SimpleForm from './components/SimpleForm.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    TreeItem,
+    SimpleForm,
+  },
+  data() {
+    return {
+      loading: false
+    }
+  },
+  computed: {
+    treeData() {
+      const treeData = this.$store.getters.getState
+      if (!treeData) return
+
+      return {
+        name: 'State',
+        value: Object.entries(treeData).map(([key, value]) => ({name: key, value}))
+      }
+    }
+  },
+  methods: {
+    async submit(iframeId) {
+      this.loading = true
+      console.log('iframeId:', iframeId)
+      await this.$store.dispatch({type: 'fetchState', payload: iframeId})
+      this.loading = false
+    }
   }
 }
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  background-color: #fff;
+}
+
+ul {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.list-view {
+  background: #383838;
+  color: white;
 }
 </style>

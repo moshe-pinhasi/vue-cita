@@ -8,3 +8,7 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+if (chrome.devtools) {
+  chrome.devtools.panels.create("Vue Cita", null, "index.html");
+}
